@@ -562,6 +562,10 @@ async def _on_shutdown(app: Application) -> None:
 
 def main():
     asyncio.set_event_loop(asyncio.new_event_loop())
+
+    webhook_url = os.getenv("WEBHOOK_URL")
+    port = int(os.getenv("PORT", 8443))
+
     app = (
         Application.builder()
         .token(TELEGRAM_TOKEN)
@@ -579,8 +583,18 @@ def main():
     app.add_handler(MessageHandler(filters.PHOTO, analyze_image))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     app.add_error_handler(error_handler)
-    logger.info("type=BOT_START | Bot iniciado correctamente")
-    app.run_polling()
+
+    if webhook_url:
+        logger.info(f"type=BOT_START | mode=webhook | url={webhook_url} | port={port}")
+        app.run_webhook(
+            listen="0.0.0.0",
+            port=port,
+            url_path=TELEGRAM_TOKEN,
+            webhook_url=f"{webhook_url}/{TELEGRAM_TOKEN}",
+        )
+    else:
+        logger.info("type=BOT_START | mode=polling")
+        app.run_polling()
 
 
 if __name__ == "__main__":
