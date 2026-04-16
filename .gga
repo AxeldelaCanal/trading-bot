@@ -1,0 +1,3 @@
+PROVIDER=claude
+FILE_PATTERNS=*.py,*.md,*.txt
+RULES_FILE=AGENTS.md
