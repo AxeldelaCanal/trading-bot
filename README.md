@@ -20,9 +20,12 @@ Soporta acciones, CEDEARs, índices y criptomonedas. Basta con enviar una captur
 | Bot framework | python-telegram-bot 21.x |
 | Análisis de imagen | OpenAI GPT-4o Vision |
 | Precios en tiempo real | yfinance |
+| Base de datos | SQLite + aiosqlite (WAL mode) |
 | HTTP client | httpx |
+| I/O asíncrono de archivos | aiofiles |
 | Variables de entorno | python-dotenv |
 | Concurrencia | asyncio |
+| Deploy | Render (webhook mode) |
 
 ---
 
@@ -30,11 +33,12 @@ Soporta acciones, CEDEARs, índices y criptomonedas. Basta con enviar una captur
 
 ```
 trading-bot/
-├── bot.py            # Lógica principal del bot
-├── prompts.py        # System prompt para GPT-4o
+├── bot.py            # Lógica principal: handlers, rate limiting, job queue
+├── db.py             # Capa de base de datos (aiosqlite, WAL mode)
+├── prompts.py        # Prompts de GPT-4o (imagen y análisis horario)
 ├── requirements.txt  # Dependencias
 ├── .env.example      # Variables de entorno requeridas
-├── Procfile          # Configuración de worker (Heroku/Render)
+├── Procfile          # Configuración web para Render
 └── README.md
 ```
 
@@ -52,6 +56,8 @@ cp .env.example .env
 |---|---|
 | `TELEGRAM_TOKEN` | Token del bot obtenido desde [@BotFather](https://t.me/BotFather) |
 | `OPENAI_API_KEY` | API key de OpenAI con acceso a GPT-4o |
+| `WEBHOOK_URL` | URL pública del servidor (ej: `https://tu-app.onrender.com`). Si no está seteada, el bot corre en modo polling (útil para desarrollo local). |
+| `PORT` | Puerto de escucha. Render lo setea automáticamente; no hace falta definirlo localmente. |
 
 ---
 
@@ -105,6 +111,18 @@ El bot quedará en modo polling. Abrí Telegram, buscá tu bot y enviá `/start`
    - Niveles de entrada, take profit y stop loss
    - Análisis técnico resumido
 
+**Comandos disponibles:**
+
+| Comando | Descripción |
+|---|---|
+| `/start` | Inicia el bot y muestra la ayuda |
+| `/agregar TICKER` | Agrega un activo a tu lista (ej: `/agregar AAPL`) |
+| `/eliminar TICKER` | Elimina un activo de tu lista |
+| `/lista` | Muestra tus activos guardados |
+| `/limpiar` | Borra toda la lista |
+| `/iniciar` | Activa el análisis automático cada hora |
+| `/detener` | Detiene el análisis automático |
+
 > **Límite:** 5 análisis por minuto por usuario.
 
 ---
@@ -115,10 +133,11 @@ El bot quedará en modo polling. Abrí Telegram, buscá tu bot y enviá `/start`
 
 ---
 
-## Próximos pasos
+## Roadmap
 
-- [ ] **Migración a webhooks** — reemplazar el modo polling por un webhook HTTPS para mayor eficiencia y menor latencia.
-- [ ] **Deploy en Render** — configurar el servicio web en [render.com](https://render.com) con variables de entorno gestionadas desde el dashboard.
+- [x] **Migración a SQLite** — reemplazar `companies.json` por base de datos con WAL mode y operaciones atómicas.
+- [x] **Webhooks** — modo polling reemplazado por webhook HTTPS; polling disponible como fallback para desarrollo local.
+- [x] **Deploy en Render** — servicio web configurado vía `Procfile` y variables de entorno.
 - [ ] Persistencia de historial de señales por usuario.
 - [ ] Soporte multi-idioma (inglés/español).
 - [ ] Dashboard web con estadísticas de señales.
@@ -145,9 +164,12 @@ Supports stocks, CEDEARs, indices, and cryptocurrencies. Just send a screenshot 
 | Bot framework | python-telegram-bot 21.x |
 | Image analysis | OpenAI GPT-4o Vision |
 | Real-time prices | yfinance |
+| Database | SQLite + aiosqlite (WAL mode) |
 | HTTP client | httpx |
+| Async file I/O | aiofiles |
 | Environment variables | python-dotenv |
 | Concurrency | asyncio |
+| Deployment | Render (webhook mode) |
 
 ---
 
@@ -187,8 +209,9 @@ python bot.py
 
 ## Roadmap
 
-- [ ] **Webhook migration** — replace polling with an HTTPS webhook for efficiency.
-- [ ] **Deploy on Render** — configure a web service on [render.com](https://render.com).
+- [x] **SQLite migration** — replaced `companies.json` with a proper database (WAL mode, atomic operations).
+- [x] **Webhook support** — polling replaced by HTTPS webhook; polling available as local dev fallback.
+- [x] **Render deployment** — web service configured via `Procfile` and environment variables.
 - [ ] Signal history persistence per user.
 - [ ] Multi-language support.
 - [ ] Web dashboard with signal statistics.
