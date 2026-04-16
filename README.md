@@ -136,8 +136,8 @@ El bot quedará en modo polling. Abrí Telegram, buscá tu bot y enviá `/start`
 ## Roadmap
 
 - [x] **Migración a SQLite** — reemplazar `companies.json` por base de datos con WAL mode y operaciones atómicas.
-- [x] **Webhooks** — modo polling reemplazado por webhook HTTPS; polling disponible como fallback para desarrollo local.
-- [x] **Deploy en Render** — servicio web configurado vía `Procfile` y variables de entorno.
+- [x] **Soporte de webhooks** — modo polling como default local; webhook activable vía `WEBHOOK_URL` para producción.
+- [ ] **Deploy en la nube** — actualmente corre en modo local. Opciones evaluadas: Railway, Fly.io, Oracle Cloud Always Free.
 - [ ] Persistencia de historial de señales por usuario.
 - [ ] Soporte multi-idioma (inglés/español).
 - [ ] Dashboard web con estadísticas de señales.
@@ -210,8 +210,8 @@ python bot.py
 ## Roadmap
 
 - [x] **SQLite migration** — replaced `companies.json` with a proper database (WAL mode, atomic operations).
-- [x] **Webhook support** — polling replaced by HTTPS webhook; polling available as local dev fallback.
-- [x] **Render deployment** — web service configured via `Procfile` and environment variables.
+- [x] **Webhook support** — polling as local default; webhook mode activatable via `WEBHOOK_URL` env var for production.
+- [ ] **Cloud deployment** — currently running locally. Evaluated options: Railway, Fly.io, Oracle Cloud Always Free.
 - [ ] Signal history persistence per user.
 - [ ] Multi-language support.
 - [ ] Web dashboard with signal statistics.
