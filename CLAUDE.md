@@ -9,11 +9,11 @@ pip install -r requirements.txt
 python bot.py
 ```
 
-Requires a `.env` file with `TELEGRAM_TOKEN` and `OPENAI_API_KEY`.
+Requires a `.env` file with `TELEGRAM_TOKEN` and `OPENAI_API_KEY`. Optionally `WEBHOOK_URL` and `PORT` for production webhook mode.
 
 To stop a running instance on Windows: `powershell -Command "Get-Process python | Stop-Process -Force"`
 
-There are no tests or linting configured.
+No tests or linting configured. `aiofiles` is required for async file I/O in `db.py` — install via `pip install -r requirements.txt`.
 
 ## Architecture
 
@@ -39,4 +39,8 @@ Both flows share the same JSON response schema and formatter.
 
 ## Deployment
 
-`Procfile`: `worker: python bot.py`. Polling mode. Planned next step: migrate to webhooks for Render.
+`Procfile`: `web: python bot.py`. Two modes controlled by env vars:
+- **Polling** (default, local): no extra config needed.
+- **Webhook** (production): set `WEBHOOK_URL=https://your-app.onrender.com` and `PORT` (auto-set by Render). Bot registers the webhook at `{WEBHOOK_URL}/{TELEGRAM_TOKEN}`.
+
+Currently running locally only. No cloud deploy active.
